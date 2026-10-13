@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPI Pancasila MTs - Tata Urutan Peraturan Perundang-Undangan</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            600: '#046A38',
+                            700: '#03532c',
+                            800: '#023d20',
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                        },
+                        gold: {
+                            500: '#D4AF37',
+                            600: '#b89728',
+                            100: '#fef9c3',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .drag-item {
+            cursor: grab;
+            transition: all 0.2s ease;
+        }
+        .drag-item:active {
+            cursor: grabbing;
+        }
+        .drop-zone {
+            transition: all 0.3s ease;
+        }
+        .drop-zone.drag-over {
+            background-color: #d1fae5;
+            border-color: #046A38;
+            transform: scale(1.01);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 via-slate-50 to-gold-100 min-h-full font-sans text-slate-800 flex flex-col">
+
+    <header class="bg-emerald-800 text-white shadow-lg sticky top-0 z-50 border-b-4 border-gold-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gold-500 text-emerald-900 p-2.5 rounded-xl shadow-md font-bold text-xl flex items-center justify-center">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <div>
+                    <div class="text-xs uppercase tracking-widest text-gold-500 font-semibold">Kanwil Kemenag Provinsi Gorontalo</div>
+                    <h1 class="text-lg font-bold">Modul Pembelajaran Interaktif • Kelas VII MTs</h1>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <!-- Student Identity Badge / Button -->
+                <button onclick="openStudentModal()" id="student-badge-btn" class="bg-emerald-700 hover:bg-emerald-600 text-gold-300 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 border border-gold-500/40 transition">
+                    <i class="fa-solid fa-user-graduate"></i> <span id="badge-name-text">Belum Masuk</span>
+                </button>
+                
+                <!-- Database Config Button -->
+                <button onclick="openConfigModal()" title="Pengaturan Koneksi Spreadsheet" class="bg-emerald-700 hover:bg-emerald-600 text-white p-2 rounded-lg text-xs transition">
+                    <i class="fa-solid fa-database"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <div class="bg-emerald-900/60 border-t border-emerald-700 px-4 py-2">
+            <nav class="max-w-7xl mx-auto flex flex-wrap gap-2 justify-center" id="nav-tabs">
+                <button onclick="switchTab('beranda')" class="nav-btn px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-gold-500 text-emerald-900 shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-house"></i> Beranda
+                </button>
+                <button onclick="switchTab('materi')" class="nav-btn px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-emerald-700 hover:bg-emerald-600 text-white transition flex items-center gap-2">
+                    <i class="fa-solid fa-book-open"></i> Materi
+                </button>
+                <button onclick="switchTab('simulasi')" class="nav-btn px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-emerald-700 hover:bg-emerald-600 text-white transition flex items-center gap-2">
+                    <i class="fa-solid fa-puzzle-piece"></i> Simulasi Hukum
+                </button>
+                <button onclick="switchTab('kuis')" class="nav-btn px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-emerald-700 hover:bg-emerald-600 text-white transition flex items-center gap-2">
+                    <i class="fa-solid fa-circle-question"></i> Kuis Evaluasi
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- TAB 1: BERANDA -->
+        <section id="tab-beranda" class="tab-content animate-fade-in space-y-6">
+            <div class="glass-card rounded-2xl p-6 sm:p-10 shadow-xl border-l-8 border-gold-500">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    <div class="lg:col-span-2 space-y-4">
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Fase D • Kurikulum Madrasah</span>
+                        <h2 class="text-2xl sm:text-4xl font-extrabold text-emerald-900 leading-tight">
+                            Tata Urutan Peraturan Perundang-Undangan di Indonesia
+                        </h2>
+                        <p class="text-slate-600 text-base sm:text-lg">
+                            Modul Eksplorasi Modular untuk siswa Madrasah Tsanawiyah di Gorontalo. Belajar memahami hierarki hukum secara interaktif dan terintegrasi database penilaian guru!
+                        </p>
+                        
+                        <!-- Student Login Box on Beranda -->
+                        <div id="welcome-login-box" class="bg-emerald-50 p-4 rounded-xl border border-emerald-300 space-y-3">
+                            <h4 class="font-bold text-emerald-900 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-id-card text-gold-600"></i> Identitas Siswa
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input type="text" id="input-nama" placeholder="Masukkan Nama Lengkap" class="p-2.5 rounded-lg border border-emerald-200 text-xs focus:ring-2 focus:ring-emerald-600 outline-none">
+                                <input type="text" id="input-kelas" placeholder="Masukkan Kelas (Cth: VII-A MTsN 1)" class="p-2.5 rounded-lg border border-emerald-200 text-xs focus:ring-2 focus:ring-emerald-600 outline-none">
+                            </div>
+                            <button onclick="saveStudentIdentity()" class="bg-gold-500 hover:bg-gold-600 text-emerald-900 text-xs font-bold px-4 py-2 rounded-lg shadow transition flex items-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan & Mulai Belajar
+                            </button>
+                        </div>
+
+                        <div class="pt-4 flex flex-wrap gap-3">
+                            <button onclick="switchTab('materi')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition flex items-center gap-2 text-sm">
+                                <i class="fa-solid fa-play"></i> Mulai Materi
+                            </button>
+                            <button onclick="switchTab('kuis')" class="bg-gold-500 hover:bg-gold-600 text-emerald-900 px-6 py-3 rounded-xl font-semibold shadow-lg transition flex items-center gap-2 text-sm">
+                                <i class="fa-solid fa-clipboard-check"></i> Kerjakan Kuis & Kirim Nilai
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                        <div class="relative w-full max-w-xs bg-gradient-to-br from-emerald-800 to-emerald-900 rounded-3xl p-6 text-white shadow-2xl text-center border-4 border-gold-500">
+                            <div class="absolute -top-4 -right-4 bg-gold-500 text-emerald-900 font-bold px-3 py-1 rounded-full text-xs shadow">Cloud Sync</div>
+                            <i class="fa-solid fa-database text-6xl text-gold-500 mb-4 mt-2"></i>
+                            <h3 class="font-bold text-lg">Database Terpadu</h3>
+                            <p class="text-xs text-emerald-100 mt-2">Seluruh nilai kuis, jawaban, dan durasi pengerjaan akan terekam otomatis ke Spreadsheet guru secara real-time.</p>
+                            <div class="mt-6 bg-emerald-700/60 p-3 rounded-xl text-xs border border-emerald-600">
+                                <span class="font-semibold text-gold-500">Kanwil Kemenag:</span> Provinsi Gorontalo
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: MATERI -->
+        <section id="tab-materi" class="tab-content hidden animate-fade-in space-y-6">
+            <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl">
+                <div class="border-b border-emerald-100 pb-4 mb-6 flex justify-between items-center flex-wrap gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-gold-600 uppercase tracking-widest">Modul 1</span>
+                        <h2 class="text-2xl font-bold text-emerald-900">Ringkasan Materi Tata Urutan Perundang-Undangan</h2>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="setMateriPage(1)" id="materi-btn-1" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white transition">1. Hierarki Hukum</button>
+                        <button onclick="setMateriPage(2)" id="materi-btn-2" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 text-slate-700 transition">2. Kedudukan & Fungsi</button>
+                        <button onclick="setMateriPage(3)" id="materi-btn-3" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 text-slate-700 transition">3. Konteks Gorontalo</button>
+                    </div>
+                </div>
+
+                <div id="materi-page-1" class="materi-page space-y-4">
+                    <h3 class="text-lg font-bold text-emerald-800 flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-gold-500"></i> Piramida Tata Urutan Peraturan Perundang-Undangan (UU No. 12/2011 jo. UU No. 13/2022)
+                    </h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Di Indonesia, peraturan perundang-undangan memiliki hierarki dari yang tertinggi hingga terendah. Peraturan yang lebih rendah tidak boleh bertentangan dengan yang lebih tinggi.
+                    </p>
+                    <div class="space-y-2 mt-4">
+                        <div class="p-3 bg-red-50 border-l-4 border-red-500 rounded-r-xl text-xs sm:text-sm"><strong>1. UUD Negara Republik Indonesia Tahun 1945</strong> (Konstitusi Tertinggi)</div>
+                        <div class="p-3 bg-orange-50 border-l-4 border-orange-500 rounded-r-xl text-xs sm:text-sm"><strong>2. Ketetapan MPR (TAP MPR)</strong></div>
+                        <div class="p-3 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl text-xs sm:text-sm"><strong>3. Undang-Undang (UU) / Perppu</strong></div>
+                        <div class="p-3 bg-yellow-50 border-l-4 border-yellow-500 rounded-r-xl text-xs sm:text-sm"><strong>4. Peraturan Pemerintah (PP)</strong></div>
+                        <div class="p-3 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-xl text-xs sm:text-sm"><strong>5. Peraturan Presiden (Perpres)</strong></div>
+                        <div class="p-3 bg-teal-50 border-l-4 border-teal-500 rounded-r-xl text-xs sm:text-sm"><strong>6. Peraturan Daerah Provinsi (Perda Provinsi)</strong></div>
+                        <div class="p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r-xl text-xs sm:text-sm"><strong>7. Peraturan Daerah Kabupaten/Kota (Perda Kab/Kota)</strong></div>
+                    </div>
+                    <div class="flex justify-end pt-4">
+                        <button onclick="setMateriPage(2)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div id="materi-page-2" class="materi-page hidden space-y-4">
+                    <h3 class="text-lg font-bold text-emerald-800 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-gold-500"></i> Kedudukan dan Fungsi
+                    </h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Fungsi utama peraturan perundang-undangan:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-xs">
+                            <span class="font-bold text-emerald-900 block mb-1">Kepastian Hukum</span> Memberikan perlindungan hak dan kepastian aturan.
+                        </div>
+                        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-xs">
+                            <span class="font-bold text-emerald-900 block mb-1">Ketertiban Sosial</span> Mengatur hak & kewajiban di masyarakat.
+                        </div>
+                    </div>
+                    <div class="flex justify-between pt-4">
+                        <button onclick="setMateriPage(1)" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold"><i class="fa-solid fa-arrow-left"></i> Sebelumnya</button>
+                        <button onclick="setMateriPage(3)" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div id="materi-page-3" class="materi-page hidden space-y-4">
+                    <h3 class="text-lg font-bold text-emerald-800 flex items-center gap-2">
+                        <i class="fa-solid fa-water text-gold-500"></i> Konteks Gorontalo
+                    </h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Penerapan hukum lokal di Gorontalo, seperti Perda Perlindungan Danau Limboto dan konservasi pesisir Teluk Tomini untuk kesejahteraan masyarakat sekitar.
+                    </p>
+                    <div class="flex justify-between pt-4">
+                        <button onclick="setMateriPage(2)" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold"><i class="fa-solid fa-arrow-left"></i> Sebelumnya</button>
+                        <button onclick="switchTab('simulasi')" class="bg-gold-500 text-emerald-900 px-4 py-2 rounded-lg text-sm font-semibold">Mulai Simulasi <i class="fa-solid fa-puzzle-piece"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: SIMULASI HUKUM -->
+        <section id="tab-simulasi" class="tab-content hidden animate-fade-in space-y-6">
+            <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl">
+                <div class="border-b border-emerald-100 pb-4 mb-4">
+                    <span class="text-xs font-bold text-gold-600 uppercase tracking-widest">Simulasi Interaktif</span>
+                    <h2 class="text-2xl font-bold text-emerald-900">Susun Piramida Tata Urutan Perundang-Undangan</h2>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-emerald-50/80 p-4 rounded-2xl border border-emerald-200 flex flex-col">
+                        <h4 class="font-bold text-emerald-900 text-sm mb-3">Bank Peraturan</h4>
+                        <div id="draggable-container" class="space-y-2.5 flex-grow"></div>
+                    </div>
+                    <div class="bg-slate-100 p-4 rounded-2xl border border-slate-300 flex flex-col">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-bold text-slate-800 text-sm">Piramida Hierarki</h4>
+                            <button onclick="resetSimulation()" class="text-xs bg-slate-200 text-slate-700 px-2 py-1 rounded">Reset</button>
+                        </div>
+                        <div id="pyramid-slots" class="space-y-2 flex-grow"></div>
+                        <button onclick="checkSimulation()" class="mt-4 w-full bg-emerald-600 text-white font-semibold py-2.5 rounded-xl text-sm">Periksa Susunan</button>
+                    </div>
+                </div>
+                <div id="simulasi-feedback" class="mt-6 hidden p-4 rounded-xl text-sm font-medium"></div>
+            </div>
+        </section>
+
+        <!-- TAB 4: KUIS EVALUASI & DATABASE SYNC -->
+        <section id="tab-kuis" class="tab-content hidden animate-fade-in space-y-6">
+            <div class="glass-card rounded-2xl p-6 sm:p-8 shadow-xl max-w-3xl mx-auto">
+                <div id="quiz-header" class="flex justify-between items-center border-b border-emerald-100 pb-4 mb-6">
+                    <div>
+                        <span class="text-xs font-bold text-gold-600 uppercase tracking-widest">Evaluasi Formatif</span>
+                        <h2 class="text-xl sm:text-2xl font-bold text-emerald-900">Kuis Pemahaman & Sinkronisasi Database</h2>
+                    </div>
+                    <div id="quiz-progress-badge" class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1.5 rounded-full">
+                        Soal 1 dari 5
+                    </div>
+                </div>
+
+                <div id="quiz-container" class="space-y-6"></div>
+
+                <div id="quiz-result" class="hidden space-y-6 text-center py-6">
+                    <div class="w-20 h-20 bg-gold-100 text-gold-600 rounded-full flex items-center justify-center mx-auto text-4xl shadow-md border-2 border-gold-500">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-emerald-900">Kuis Selesai!</h3>
+                    <p id="quiz-score-text" class="text-lg text-slate-700 font-medium">Skor Anda: <span class="text-emerald-700 font-bold">100</span></p>
+                    
+                    <!-- Cloud Sync Status Box -->
+                    <div id="sync-status-box" class="p-4 rounded-xl text-xs sm:text-sm font-medium bg-amber-50 border border-amber-300 max-w-md mx-auto">
+                        <i class="fa-solid fa-spinner fa-spin mr-2"></i> Sedang mengirim data hasil ke Google Sheets database...
+                    </div>
+
+                    <div class="pt-4 flex justify-center gap-3">
+                        <button onclick="restartQuiz()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i> Ulangi Kuis
+                        </button>
+                        <button onclick="switchTab('beranda')" class="bg-gold-500 hover:bg-gold-600 text-emerald-900 px-6 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-house"></i> Beranda
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- STUDENT IDENTITY MODAL -->
+    <div id="student-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-fade-in border-t-4 border-emerald-600">
+            <h3 class="text-lg font-bold text-emerald-900 flex items-center gap-2">
+                <i class="fa-solid fa-user-pen text-gold-500"></i> Masukkan Identitas Siswa
+            </h3>
+            <p class="text-xs text-slate-600">Nama dan kelas Anda diperlukan agar guru dapat merekam nilai dan analisis jawaban di spreadsheet.</p>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap</label>
+                    <input type="text" id="modal-nama" class="w-full p-2.5 rounded-lg border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-600 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Kelas / Madrasah</label>
+                    <input type="text" id="modal-kelas" class="w-full p-2.5 rounded-lg border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-600 outline-none">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeStudentModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold">Batal</button>
+                <button onclick="saveModalIdentity()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-semibold">Simpan Identitas</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAS URL CONFIG MODAL -->
+    <div id="config-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-fade-in border-t-4 border-gold-500">
+            <h3 class="text-lg font-bold text-emerald-900 flex items-center gap-2">
+                <i class="fa-solid fa-database text-gold-600"></i> Pengaturan URL Google Apps Script
+            </h3>
+            <p class="text-xs text-slate-600">Masukkan URL Web App Google Apps Script Anda agar data kuis terkirim otomatis ke Spreadsheet.</p>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Web App URL</label>
+                <input type="text" id="input-gas-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full p-2.5 rounded-lg border border-slate-300 text-xs focus:ring-2 focus:ring-emerald-600 outline-none">
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeConfigModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold">Tutup</button>
+                <button onclick="saveGasUrl()" class="px-4 py-2 bg-gold-500 text-emerald-900 rounded-lg text-xs font-semibold">Simpan URL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM NOTIFICATION MODAL (NO ALERT) -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4 animate-fade-in">
+            <div id="modal-icon" class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h4 id="modal-title" class="font-bold text-slate-800 text-base">Informasi</h4>
+            <p id="modal-message" class="text-xs text-slate-600"></p>
+            <button onclick="closeCustomModal()" class="w-full py-2 bg-emerald-600 text-white rounded-xl text-xs font-semibold shadow">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let studentState = {
+            name: localStorage.getItem('mpi_student_name') || '',
+            class: localStorage.getItem('mpi_student_class') || '',
+            gasUrl: localStorage.getItem('mpi_gas_url') || 'https://script.google.com/macros/s/AKfycbzx-HO8OAfwpkd41_R3WtMGz2sh8dmzx9rO5Xu3Rm8WYuQV5LP4rpnkHyppRoJk9Ax1/exec'
+        };
+
+        window.onload = function() {
+            updateStudentBadge();
+            initSimulation();
+            renderQuiz();
+            if(!studentState.name) {
+                setTimeout(openStudentModal, 500);
+            }
+        };
+
+        function showNotification(title, message, isSuccess = true) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            const icon = document.getElementById('modal-icon');
+            icon.className = isSuccess ? "w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-xl" : "w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto text-xl";
+            icon.innerHTML = isSuccess ? '<i class="fa-solid fa-check"></i>' : '<i class="fa-solid fa-triangle-exclamation"></i>';
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeCustomModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        function openStudentModal() {
+            document.getElementById('modal-nama').value = studentState.name;
+            document.getElementById('modal-kelas').value = studentState.class;
+            document.getElementById('student-modal').classList.remove('hidden');
+        }
+
+        function closeStudentModal() {
+            document.getElementById('student-modal').classList.add('hidden');
+        }
+
+        function saveModalIdentity() {
+            const name = document.getElementById('modal-nama').value.trim();
+            const cls = document.getElementById('modal-kelas').value.trim();
+            if(!name || !cls) {
+                showNotification('Perhatian', 'Nama dan kelas harus diisi!', false);
+                return;
+            }
+            studentState.name = name;
+            studentState.class = cls;
+            localStorage.setItem('mpi_student_name', name);
+            localStorage.setItem('mpi_student_class', cls);
+            updateStudentBadge();
+            closeStudentModal();
+            showNotification('Berhasil', 'Identitas siswa berhasil disimpan.');
+        }
+
+        function saveStudentIdentity() {
+            const name = document.getElementById('input-nama').value.trim();
+            const cls = document.getElementById('input-kelas').value.trim();
+            if(!name || !cls) {
+                showNotification('Perhatian', 'Nama dan kelas harus diisi!', false);
+                return;
+            }
+            studentState.name = name;
+            studentState.class = cls;
+            localStorage.setItem('mpi_student_name', name);
+            localStorage.setItem('mpi_student_class', cls);
+            updateStudentBadge();
+            showNotification('Berhasil', 'Identitas siswa tersimpan. Silakan lanjutkan belajar!');
+        }
+
+        function updateStudentBadge() {
+            const badge = document.getElementById('badge-name-text');
+            if(studentState.name) {
+                badge.innerText = `${studentState.name} (${studentState.class})`;
+            } else {
+                badge.innerText = "Belum Masuk";
+            }
+        }
+
+        function openConfigModal() {
+            document.getElementById('input-gas-url').value = studentState.gasUrl;
+            document.getElementById('config-modal').classList.remove('hidden');
+        }
+
+        function closeConfigModal() {
+            document.getElementById('config-modal').classList.add('hidden');
+        }
+
+        function saveGasUrl() {
+            const url = document.getElementById('input-gas-url').value.trim();
+            studentState.gasUrl = url;
+            localStorage.setItem('mpi_gas_url', url);
+            closeConfigModal();
+            showNotification('Berhasil', 'URL Google Apps Script tersimpan.');
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Materi Page Navigation
+        function setMateriPage(pageNum) {
+            document.querySelectorAll('.materi-page').forEach(el => el.classList.add('hidden'));
+            document.getElementById('materi-page-' + pageNum).classList.remove('hidden');
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById('materi-btn-' + i);
+                btn.className = (i === pageNum) ? "px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white transition" : "px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 text-slate-700 transition";
+            }
+        }
+
+        // Simulation Logic
+        const pyramidData = [
+            { level: 1, name: "UUD 1945 (Undang-Undang Dasar 1945)" },
+            { level: 2, name: "Ketetapan MPR (TAP MPR)" },
+            { level: 3, name: "Undang-Undang (UU) / Perppu" },
+            { level: 4, name: "Peraturan Pemerintah (PP)" },
+            { level: 5, name: "Peraturan Presiden (Perpres)" },
+            { level: 6, name: "Peraturan Daerah Provinsi (Perda Provinsi)" },
+            { level: 7, name: "Peraturan Daerah Kab/Kota (Perda Kab/Kota)" }
+        ];
+
+        let shuffledItems = [];
+        let placedItems = {};
+
+        function initSimulation() {
+            shuffledItems = [...pyramidData].sort(() => Math.random() - 0.5);
+            placedItems = {};
+            renderSimulationUI();
+            document.getElementById('simulasi-feedback').classList.add('hidden');
+        }
+
+        function renderSimulationUI() {
+            const bankContainer = document.getElementById('draggable-container');
+            bankContainer.innerHTML = '';
+            const placedIds = Object.values(placedItems);
+            const remaining = shuffledItems.filter(item => !placedIds.includes(item.level));
+
+            if (remaining.length === 0) {
+                bankContainer.innerHTML = '<div class="text-center text-xs text-slate-400 italic py-6">Semua kartu sudah tersusun.</div>';
+            } else {
+                remaining.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = "drag-item bg-white p-3 rounded-xl border border-emerald-200 shadow-sm text-xs font-medium text-emerald-900 flex justify-between items-center";
+                    div.innerHTML = `<span>${item.name}</span> <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Pilih</span>`;
+                    div.onclick = () => autoPlaceItem();
+                    bankContainer.appendChild(div);
+                });
+            }
+
+            const slotsContainer = document.getElementById('pyramid-slots');
+            slotsContainer.innerHTML = '';
+            pyramidData.forEach(slot => {
+                const isFilled = placedItems[slot.level];
+                const filledItem = isFilled ? pyramidData.find(i => i.level === isFilled) : null;
+                const slotDiv = document.createElement('div');
+                slotDiv.className = "drop-zone p-2.5 rounded-xl border-2 border-dashed border-slate-300 bg-white flex justify-between items-center text-xs";
+                
+                if (filledItem) {
+                    slotDiv.innerHTML = `<div class="font-semibold text-emerald-900">Tingkat ${slot.level}: ${filledItem.name}</div><button onclick="removePlacedItem(${slot.level})" class="text-red-500"><i class="fa-solid fa-xmark"></i></button>`;
+                } else {
+                    slotDiv.innerHTML = `<span class="text-slate-400">Tingkat ${slot.level}: Kosong</span>`;
+                }
+                slotsContainer.appendChild(slotDiv);
+            });
+        }
+
+        function autoPlaceItem() {
+            for (let i = 1; i <= 7; i++) {
+                if (!placedItems[i]) {
+                    const placedIds = Object.values(placedItems);
+                    const remaining = shuffledItems.filter(item => !placedIds.includes(item.level));
+                    if (remaining.length > 0) {
+                        placedItems[i] = remaining[0].level;
+                        renderSimulationUI();
+                        break;
+                    }
+                }
+            }
+        }
+
+        function removePlacedItem(slotLevel) {
+            delete placedItems[slotLevel];
+            renderSimulationUI();
+        }
+
+        function resetSimulation() {
+            initSimulation();
+        }
+
+        function checkSimulation() {
+            let correctCount = 0;
+            for (let i = 1; i <= 7; i++) {
+                if (placedItems[i] === i) correctCount++;
+            }
+            const fb = document.getElementById('simulasi-feedback');
+            fb.classList.remove('hidden');
+            if (correctCount === 7) {
+                fb.className = "mt-6 p-4 rounded-xl text-sm font-medium bg-emerald-100 text-emerald-900 border border-emerald-300";
+                fb.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i><strong>Luar Biasa!</strong> Susunan benar 100%.`;
+            } else {
+                fb.className = "mt-6 p-4 rounded-xl text-sm font-medium bg-amber-100 text-amber-900 border border-amber-300";
+                fb.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600 mr-2"></i> Baru ${correctCount} dari 7 tingkat yang tepat. Coba lagi!`;
+            }
+        }
+
+        // Quiz Data & Sync Logic
+        const quizData = [
+            { question: "Peraturan perundang-undangan tertinggi di negara Republik Indonesia adalah...", options: ["Ketetapan MPR", "UUD 1945", "Undang-Undang", "Peraturan Pemerintah"], answer: 1, explanation: "UUD 1945 adalah hukum dasar tertulis dan konstitusi tertinggi negara." },
+            { question: "Pihak yang berwenang bersama DPR membentuk Undang-Undang adalah...", options: ["Mahkamah Konstitusi", "Gubernur", "Presiden", "Ketua MPR"], answer: 2, explanation: "DPR memegang kekuasaan membentuk UU bersama Presiden." },
+            { question: "Bentuk peraturan daerah di Gorontalo untuk melindungi Danau Limboto adalah...", options: ["Peraturan Pemerintah", "Perpres", "Peraturan Daerah (Perda)", "Keputusan Menteri"], answer: 2, explanation: "Perda dibentuk oleh DPRD bersama Gubernur/Bupati." },
+            { question: "Fungsi utama tata urutan perundang-undangan adalah...", options: ["Agar rumit", "Mencegah pertentangan antar-aturan & kepastian hukum", "Memberikan kekuasaan mutlak", "Menghapuskan hukum adat"], answer: 1, explanation: "Tata urutan menjamin keselarasan hukum dan kepastian." },
+            { question: "Sikap siswa MTs yang mencerminkan cinta hukum dan tanah air adalah...", options: ["Menaati tata tertib madrasah & hukum", "Mematuhi aturan jika diawasi", "Membuat aturan sendiri", "Mengabaikan aturan"], answer: 0, explanation: "Kepatuhan tata tertib adalah wujud cinta tanah air." }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            const progressBadge = document.getElementById('quiz-progress-badge');
+            if (currentQuestion >= quizData.length) {
+                showQuizResult();
+                return;
+            }
+            progressBadge.innerText = `Soal ${currentQuestion + 1} dari ${quizData.length}`;
+            const q = quizData[currentQuestion];
+            let html = `<div class="space-y-4 animate-fade-in"><h3 class="text-base sm:text-lg font-bold text-emerald-900">${currentQuestion + 1}. ${q.question}</h3><div class="space-y-2.5">`;
+            q.options.forEach((opt, idx) => {
+                html += `<button onclick="selectAnswer(${idx})" class="w-full text-left p-3.5 rounded-xl border border-emerald-200 bg-white hover:bg-emerald-50 text-slate-700 font-medium text-sm transition flex items-center gap-3 shadow-sm"><span class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs flex-shrink-0">${String.fromCharCode(65 + idx)}</span><span>${opt}</span></button>`;
+            });
+            html += `</div></div>`;
+            container.innerHTML = html;
+        }
+
+        function selectAnswer(selectedIndex) {
+            const q = quizData[currentQuestion];
+            const isCorrect = selectedIndex === q.answer;
+            if (isCorrect) score += 20;
+            userAnswers.push({
+                no: currentQuestion + 1,
+                pertanyaan: q.question,
+                jawabanSiswa: q.options[selectedIndex],
+                kunciJawaban: q.options[q.answer],
+                isCorrect: isCorrect
+            });
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `
+                <div class="space-y-4 animate-fade-in p-6 rounded-2xl ${isCorrect ? 'bg-emerald-50 border border-emerald-300' : 'bg-red-50 border border-red-300'}">
+                    <div class="flex items-center gap-3">
+                        <div class="${isCorrect ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'} w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg"><i class="fa-solid ${isCorrect ? 'fa-check' : 'fa-xmark'}"></i></div>
+                        <div>
+                            <h4 class="font-bold ${isCorrect ? 'text-emerald-900' : 'text-red-900'} text-base">${isCorrect ? 'Benar!' : 'Kurang Tepat'}</h4>
+                            <p class="text-xs text-slate-600">Jawaban benar: <strong>${q.options[q.answer]}</strong></p>
+                        </div>
+                    </div>
+                    <div class="bg-white/80 p-4 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-700">
+                        <strong>Pembahasan:</strong> ${q.explanation}
+                    </div>
+                    <button onclick="nextQuestion()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-sm">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            `;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            renderQuiz();
+        }
+
+        function showQuizResult() {
+            if(!studentState.name) {
+                openStudentModal();
+            }
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-header').classList.add('hidden');
+            const resultDiv = document.getElementById('quiz-result');
+            resultDiv.classList.remove('hidden');
+
+            document.getElementById('quiz-score-text').innerHTML = `Skor Akhir: <span class="text-emerald-700 font-bold text-2xl">${score} / 100</span>`;
+            
+            // Send data to Google Sheets via GAS Web App
+            sendDataToGoogleSheets();
+        }
+
+        function sendDataToGoogleSheets() {
+            const statusBox = document.getElementById('sync-status-box');
+            if(!studentState.gasUrl) {
+                statusBox.className = "p-4 rounded-xl text-xs sm:text-sm font-medium bg-red-50 border border-red-300 max-w-md mx-auto text-red-800";
+                statusBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> URL Google Apps Script belum diatur. Klik ikon database (<i class="fa-solid fa-database"></i>) di atas untuk memasukkan URL Web App agar nilai tersimpan.`;
+                return;
+            }
+
+            const correctCount = userAnswers.filter(a => a.isCorrect).length;
+            const incorrectCount = userAnswers.length - correctCount;
+
+            const payload = {
+                action: "submit_quiz",
+                name: studentState.name,
+                class: studentState.class,
+                score: score,
+                correctCount: correctCount,
+                incorrectCount: incorrectCount,
+                answers: userAnswers
+            };
+
+            fetch(studentState.gasUrl, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                statusBox.className = "p-4 rounded-xl text-xs sm:text-sm font-medium bg-emerald-50 border border-emerald-300 max-w-md mx-auto text-emerald-900";
+                statusBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-2"></i> Data evaluasi atas nama <strong>${studentState.name}</strong> (${studentState.class}) berhasil dikirim & direkam di Google Spreadsheet guru!`;
+            }).catch(err => {
+                statusBox.className = "p-4 rounded-xl text-xs sm:text-sm font-medium bg-red-50 border border-red-300 max-w-md mx-auto text-red-800";
+                statusBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> Gagal mengirim data ke cloud. Periksa koneksi atau URL Web App Anda.`;
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = [];
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('quiz-header').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            renderQuiz();
+        }
+    </script>
+</body>
+</html>
